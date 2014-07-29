@@ -3,7 +3,7 @@
 */
 public class Rule{
 
-		int turnCount = 0;
+		static int turnCount = 0;
 		int whatToCheck_x = 0;
 		int whatToCheck_y = 0;		
 
@@ -13,6 +13,7 @@ public class Rule{
 
       	Boolean isGameClear = false;
       	while(!isGameClear){
+      		System.out.println("turnCount:" + turnCount);
       		map.printMap(map.mapHistoryArray.get(turnCount));
       		System.out.println("プレイヤーの座標" + player1.playerPosition_x + "," + player1.playerPosition_y); 
       		playerInput = player1.getPlayerInput();
@@ -64,10 +65,24 @@ public class Rule{
 		//System.out.println("ユーザー入力:" + playerInput);
 		char check = checkTheObject(playerInput, map, player1);
 		System.out.println("object:" + check);
+		System.out.println("(2,3)" + nextMapArray[3][2]);
 		switch(check){
 			case ' ':
-				nextMapArray[player1.playerPosition_x][player1.playerPosition_y] = map.initialMapArray[player1.playerPosition_x][player1.playerPosition_y];
-				nextMapArray[whatToCheck_x][whatToCheck_y] = 'p';
+			case '.':
+				nextMapArray[player1.playerPosition_y][player1.playerPosition_x] = map.initialMapArray[player1.playerPosition_y][player1.playerPosition_x];
+				System.out.println("(x,y)" + player1.playerPosition_y + "," + player1.playerPosition_x);
+				
+				//map.printMap(map.mapHistoryArray.get(0));
+
+				System.out.println("initial:" + map.initialMapArray[player1.playerPosition_y][player1.playerPosition_x]);
+				if(map.initialMapArray[player1.playerPosition_y][player1.playerPosition_x] == 'p'){
+					nextMapArray[player1.playerPosition_y][player1.playerPosition_x] = ' ';
+				}
+				nextMapArray[whatToCheck_y][whatToCheck_x] = 'p';
+				player1.playerPosition_x = whatToCheck_x;
+				player1.playerPosition_y = whatToCheck_y;
+
+
 				turnCount++;
 				break;
 			default:
@@ -104,7 +119,7 @@ public class Rule{
 		System.out.println("whatToCheck_x = " + whatToCheck_x);
 		System.out.println("whatToCheck_y = " + whatToCheck_y);
 
-		return map.initialMapArray[whatToCheck_x][whatToCheck_y];
+		return map.initialMapArray[whatToCheck_y][whatToCheck_x];
 		
 	}
 	

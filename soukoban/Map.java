@@ -74,6 +74,7 @@ public class Map{
                         for(int i = 0; i < line.length(); i++){
                             _initialMapArray[lineCounter][i] = line.charAt(i);
                             if(line.charAt(i) == '.'){
+                              System.out.println(lineCounter + "," +  i);
                             	goalNumber++;
                               }
                               if(line.charAt(i) == 'p'){
@@ -98,14 +99,15 @@ public class Map{
     	for(int i = 0; i<8; i++){
             	//System.out.print("startLine" + i);
                   for(int j = 0; j<9; j++){
-                  		if(initialMapArray[i][j] == '.'){
-                  			goalNumber++;
-                  		}
+                  		//if(initialMapArray[i][j] == '.');
+                  			//goalNumber++;
+                  		
                         System.out.print(mapArray[i][j]);
-                    
                   }
-                  System.out.println("");
-            }
+                    System.out.println("");
+      }
+                  
+            
             System.out.println("goalNumber = " + goalNumber);
 
     }
