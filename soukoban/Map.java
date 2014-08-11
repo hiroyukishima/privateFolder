@@ -78,8 +78,8 @@ public class Map{
                             	goalNumber++;
                               }
                               if(line.charAt(i) == 'p'){
-                              	player1.playerPosition_x = i;
-                              	player1.playerPosition_y = lineCounter;
+                              	player1.playerPosition_x.add(i);
+                              	player1.playerPosition_y.add(lineCounter);
                               }
 
                         }

@@ -13,10 +13,8 @@ public class Soukoban{
 		//rule.startGame(hiro);
 		map.initialMapArray = map.inputMap(args, player1);
 		map.mapHistoryArray.add(map.initialMapArray);
-      
-      	map.printMap(map.mapHistoryArray.get(0));
 
-      	System.out.println("プレイヤーの座標" + player1.playerPosition_x + "," + player1.playerPosition_y); 
+      	//System.out.println("プレイヤーの座標" + player1.playerPosition_x + "," + player1.playerPosition_y); 
 
 		
 		rule.gameStart(map, player1);

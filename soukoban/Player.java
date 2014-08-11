@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.NumberFormatException;
 import java.lang.String;
+import java.util.ArrayList;
 
 public class Player{
 	public static final int LEFT = 0;
@@ -13,10 +14,12 @@ public class Player{
 	public static final int DOWN = 2;
 	public static final int RIGHT = 3;
 	public static final int CANCEL = 4;
+	public static final int UNDO = 5;
+
 
 	//public int[][] playerPosition;
-	public int playerPosition_x;
-	public int playerPosition_y;
+	public ArrayList<Integer> playerPosition_x = new ArrayList<Integer>();
+	public ArrayList<Integer> playerPosition_y = new ArrayList<Integer>();
 
 	public int getPlayerInput(){
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -54,6 +57,8 @@ public class Player{
 						return Player.DOWN;//2
 					case 'd':
 						return Player.RIGHT;//3
+					case 'u':
+						return Player.UNDO;//5
 					default:
 						return Player.CANCEL;//4
 				}
@@ -68,8 +73,8 @@ public class Player{
 		return Player.CANCEL;
 	}
 	public void setPlayerPosition(int x, int y){
-		playerPosition_x = x;
-		playerPosition_y = y;
+		playerPosition_x.add(x);
+		playerPosition_y.add(y);
 	}
 
 }

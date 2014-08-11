@@ -1,11 +1,15 @@
 /**
 *rule class
 */
+import java.util.Arrays;
+import java.lang.Object;
+
 public class Rule{
 
 		static int turnCount = 0;
 		int whatToCheck_x = 0;
-		int whatToCheck_y = 0;		
+		int whatToCheck_y = 0;
+		static int goalCounter = 0;		
 
 	public void gameStart(Map map, Player player1){
 		
@@ -13,21 +17,36 @@ public class Rule{
 
       	Boolean isGameClear = false;
       	while(!isGameClear){
-      		System.out.println("turnCount:" + turnCount);
-      		map.printMap(map.mapHistoryArray.get(turnCount));
-      		System.out.println("プレイヤーの座標" + player1.playerPosition_x + "," + player1.playerPosition_y); 
-      		playerInput = player1.getPlayerInput();
-      		map.nextMapArray = changeMap(playerInput, map, player1);
-      		//goalCounterはグローバル変数にして、changeMap内でかえてしまうか
-      		//readableか分からないけど。
-      		//だとするとこの時点でgoalCounterが更新されている
-      		if(map.goalCounter == map.goalNumber){
+			System.out.println("turnCount:" + turnCount);
+			System.out.println("goalCounter:" + goalCounter);
+			map.printMap(map.mapHistoryArray.get(turnCount));
+	 		//System.out.println("プレイヤーの座標" + player1.playerPosition_x.get(turnCount) + "," + player1.playerPosition_y.get(turnCount)); 
+			playerInput = player1.getPlayerInput();
+		
+			if(playerInput == Player.UNDO){
+				System.out.println("あんどうー");
+				map.mapHistoryArray.remove(turnCount);
+				player1.playerPosition_x.remove(turnCount);
+				player1.playerPosition_y.remove(turnCount);
+				turnCount--;
+			}else{
+			Boolean ifChange = changeMap(playerInput, map, player1);
+			//goalCounterはグローバル変数にして、changeMap内でかえてしまうか
+			//readableか分からないけど。
+			//だとするとこの時点でgoalCounterが更新されている
+				if(ifChange){
+					map.mapHistoryArray.add(map.nextMapArray);
+					turnCount++;
+				}
+			}
+			if(goalCounter == map.goalNumber){
+				System.out.println("おめ");
       			isGameClear = true;
-      		}
-      		map.mapHistoryArray.add(map.nextMapArray);
+    	  	}
       
   
       	}
+
 	}
 
 	
@@ -59,67 +78,152 @@ public class Rule{
 	}
 	*/
 	
-	public char[][] changeMap(int playerInput, Map map, Player player1){
-		
-		char[][] nextMapArray = map.mapHistoryArray.get(turnCount);
+	public boolean changeMap(int playerInput, Map map, Player player1){
+
+		 map.nextMapArray = new char[map.mapHistoryArray.get(turnCount).length][];
+		char[][] tempMapArray = map.mapHistoryArray.get(turnCount);
+		for(int i = 0; i < tempMapArray.length; i++){
+			map.nextMapArray[i] = tempMapArray[i].clone();
+		}
+		map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)];
+		/*
+		for(int i = 0; i < tempMapArray.length; i++){
+			for(int j = 0; j< tempMapArray.length; j++){
+				if(nextMapArray[j][i] == 'p'){
+					nextMapArray[j][i] = ' ';
+					System.out.println("チェンジ" + j + "," + i);
+				}
+			}
+		}
+		*/
+
+		//nextMapArray = Arrays.copyOf(map.mapHistoryArray.get(turnCount), map.mapHistoryArray.get(turnCount).length);
 		//System.out.println("ユーザー入力:" + playerInput);
 		char check = checkTheObject(playerInput, map, player1);
 		System.out.println("object:" + check);
-		System.out.println("(2,3)" + nextMapArray[3][2]);
+		//System.out.println("(2,3)" + nextMapArray[3][2]);
 		switch(check){
 			case ' ':
 			case '.':
-				nextMapArray[player1.playerPosition_y][player1.playerPosition_x] = map.initialMapArray[player1.playerPosition_y][player1.playerPosition_x];
-				System.out.println("(x,y)" + player1.playerPosition_y + "," + player1.playerPosition_x);
-				
-				//map.printMap(map.mapHistoryArray.get(0));
-
-				System.out.println("initial:" + map.initialMapArray[player1.playerPosition_y][player1.playerPosition_x]);
-				if(map.initialMapArray[player1.playerPosition_y][player1.playerPosition_x] == 'p'){
-					nextMapArray[player1.playerPosition_y][player1.playerPosition_x] = ' ';
+				map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)];
+				if(map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] == 'p' || map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] == 'o'){
+					map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = ' ';
 				}
-				nextMapArray[whatToCheck_y][whatToCheck_x] = 'p';
-				player1.playerPosition_x = whatToCheck_x;
-				player1.playerPosition_y = whatToCheck_y;
 
+				map.nextMapArray[whatToCheck_y][whatToCheck_x] = 'p';
+				player1.playerPosition_x.add(whatToCheck_x);
+				player1.playerPosition_y.add(whatToCheck_y);
 
-				turnCount++;
-				break;
+				System.out.println("p = " + map.nextMapArray[whatToCheck_y][whatToCheck_x]);
+				return true;
+			case 'o':
+				int checkX = 0;
+				int checkY = 0;
+				switch(playerInput){
+					case Player.RIGHT:
+						checkX = player1.playerPosition_x.get(turnCount) + 2;
+						checkY = player1.playerPosition_y.get(turnCount);
+						break;
+					case Player.LEFT:
+						checkX = player1.playerPosition_x.get(turnCount) - 2;
+						checkY = player1.playerPosition_y.get(turnCount);
+						break;
+					case Player.UP:
+						checkX = player1.playerPosition_x.get(turnCount);
+						checkY = player1.playerPosition_y.get(turnCount) - 2;
+						break;
+					case Player.DOWN:
+						checkX = player1.playerPosition_x.get(turnCount);
+						checkY = player1.playerPosition_y.get(turnCount) + 2;
+						break;
+				}
+				System.out.println("チェック対象" + "'" + map.nextMapArray[checkY][checkX] + "'");
+				char content = map.nextMapArray[checkY][checkX];
+					switch(content){
+						case ' ':
+							map.nextMapArray[checkY][checkX] = 'o';
+							map.nextMapArray[whatToCheck_y][whatToCheck_x] = 'p';
+							map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)];
+							if(map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] == 'p' || map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] == 'o'){
+								map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = ' ';
+							}
+
+							player1.playerPosition_x.add(whatToCheck_x);
+							player1.playerPosition_y.add(whatToCheck_y);
+							if(map.initialMapArray[whatToCheck_y][whatToCheck_x] == '.'){
+								goalCounter--;
+							}
+							return true;
+						case '.':
+							goalCounter++;
+							map.nextMapArray[checkY][checkX] = 'o';
+							map.nextMapArray[whatToCheck_y][whatToCheck_x] = 'p';
+							map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)];
+							if(map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] == 'p' || map.initialMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] == 'o'){
+								map.nextMapArray[player1.playerPosition_y.get(turnCount)][player1.playerPosition_x.get(turnCount)] = ' ';
+							}
+
+							player1.playerPosition_x.add(whatToCheck_x);
+							player1.playerPosition_y.add(whatToCheck_y);
+							if(map.initialMapArray[whatToCheck_y][whatToCheck_x] == '.'){
+								goalCounter--;
+							}
+							
+							System.out.println("goalCounter:" + goalCounter);
+							return true;
+							
+						
+
+						case '#':
+							break;
+					}
+
+			case '#':
+				return false;
 			default:
-				break;
+				return false;
+			
 
 		}
 
-		return nextMapArray;
 
 	}
 	public char checkTheObject(int playerInput, Map map, Player player1){
+
 		switch(playerInput){
 			case Player.RIGHT:
-				whatToCheck_x = player1.playerPosition_x + 1;
-				whatToCheck_y = player1.playerPosition_y;
+				whatToCheck_x = player1.playerPosition_x.get(turnCount) + 1;
+				whatToCheck_y = player1.playerPosition_y.get(turnCount);
 				break;
 			case Player.LEFT:
-				whatToCheck_x = player1.playerPosition_x - 1;
-				whatToCheck_y = player1.playerPosition_y;
+				whatToCheck_x = player1.playerPosition_x.get(turnCount) - 1;
+				whatToCheck_y = player1.playerPosition_y.get(turnCount);
 				break;
 			case Player.UP:
-				whatToCheck_x = player1.playerPosition_x;
-				whatToCheck_y = player1.playerPosition_y -1;
+				whatToCheck_x = player1.playerPosition_x.get(turnCount);
+				whatToCheck_y = player1.playerPosition_y.get(turnCount) -1;
 				break;
 			case Player.DOWN:
-				whatToCheck_x = player1.playerPosition_x;
-				whatToCheck_y = player1.playerPosition_y + 1;
+				whatToCheck_x = player1.playerPosition_x.get(turnCount);
+				whatToCheck_y = player1.playerPosition_y.get(turnCount) + 1;
+				break;
+			case Player.CANCEL:
+				break;
+			case Player.UNDO:
 				break;
 			default:
 				break;
 
 
+		}
+		char object = map.mapHistoryArray.get(turnCount)[whatToCheck_y][whatToCheck_x];
+		if(object == 'p'){
+			object = map.initialMapArray[whatToCheck_y][whatToCheck_x];
 		}
 		System.out.println("whatToCheck_x = " + whatToCheck_x);
 		System.out.println("whatToCheck_y = " + whatToCheck_y);
 
-		return map.initialMapArray[whatToCheck_y][whatToCheck_x];
+		return object;
 		
 	}
 	
