@@ -1,0 +1,14 @@
+soukoban 
+	Game game
+	game.getInstance  //make game class
+		mapMaker,getInstance
+		player
+		rule
+		initialMap
+		put map into mapArray
+	game.start
+
+	while(){
+		printTitle
+	}
+	
